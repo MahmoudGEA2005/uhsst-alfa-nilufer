@@ -1,63 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import PageHeader from '../components/PageHeader/PageHeader';
 import SearchFilterBar from '../components/SearchFilterBar/SearchFilterBar';
-import AddLocationModal from '../components/AddLocationModal/AddLocationModal';
-import LocationsTable from '../components/LocationsTable/LocationsTable';
-import './Locations.css';
+import AddDriverModal from '../components/AddDriverModal/AddDriverModal';
+import DriversTable from '../components/DriversTable/DriversTable';
+import './Drivers.css';
 
-interface Location {
+interface Driver {
   id: number;
-  name: string;
-  longitude: number;
-  latitude: number;
-  population: number;
-  home_residences: number;
-  companies: number;
-  stores: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  license_number: string;
+  vehicle_number: string;
+  id_number: string;
+  image: string | null;
   created_at: string;
 }
 
-const Locations = () => {
+const Drivers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchLocations = async () => {
+  const fetchDrivers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/locations/all`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/drivers/all`);
       const data = await response.json();
       
       if (response.ok) {
-        setLocations(data.data || []);
+        setDrivers(data.data || []);
         setError(null);
       } else {
-        setError('Konumlar yüklenirken bir hata oluştu');
+        setError('Sürücüler yüklenirken bir hata oluştu');
       }
     } catch (err) {
       setError('Sunucuya bağlanırken bir hata oluştu');
-      console.error('Error fetching locations:', err);
+      console.error('Error fetching drivers:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchLocations();
+    fetchDrivers();
   }, []);
 
-  const handleAddNewLocation = () => {
+  const handleAddNewDriver = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (location: Location) => {
-    console.log('Düzenle:', location);
+  const handleEdit = (driver: Driver) => {
+    console.log('Düzenle:', driver);
     // TODO: Open edit modal
   };
 
-  const handleDelete = (location: Location) => {
-    console.log('Sil:', location);
+  const handleDelete = (driver: Driver) => {
+    console.log('Sil:', driver);
     // TODO: Implement delete functionality
   };
 
@@ -75,53 +76,53 @@ const Locations = () => {
 
   const filters = [
     {
-      label: 'Nüfus',
-      options: ['Tümü', '0-1000', '1000-5000', '5000+']
+      label: 'Durum',
+      options: ['Tüm Durumlar', 'Aktif', 'Pasif', 'İzinli']
     },
     {
-      label: 'Bölge Tipi',
-      options: ['Tümü', 'Konut Ağırlıklı', 'İş Ağırlıklı', 'Karma']
+      label: 'Araç Tipi',
+      options: ['Araç Tipi', 'Kamyon', 'Kamyonet', 'Çöp Kamyonu']
     }
   ];
 
   return (
-    <div className="locations-page">
+    <div className="drivers-page">
       <PageHeader
-        title="Konumlar"
-        subtitle="Bölgeleri yönetin ve konum bilgilerini düzenleyin."
+        title="Kamyon Sürücüleri"
+        subtitle="Personeli yönetin ve sürücüleri atık toplama rotalarına atayın."
         breadcrumb={[
           { label: 'Ana Sayfa', path: '/' },
-          { label: 'Konumlar' }
+          { label: 'Sürücüler' }
         ]}
       />
 
       <SearchFilterBar
-        searchPlaceholder="Konum adı ile ara..."
+        searchPlaceholder="İsim, ID veya ehliyet ile ara..."
         filters={filters}
-        onAddNew={handleAddNewLocation}
-        addButtonText="Yeni Konum Ekle"
+        onAddNew={handleAddNewDriver}
+        addButtonText="Yeni Sürücü Ekle"
         onDownload={handleDownload}
         onSearch={handleSearch}
         onFilterChange={handleFilterChange}
       />
 
       {loading ? (
-        <div className="locations-content">
-          <p className="loading-text">Konumlar yükleniyor...</p>
+        <div className="drivers-content">
+          <p className="loading-text">Sürücüler yükleniyor...</p>
         </div>
       ) : error ? (
-        <div className="locations-content">
+        <div className="drivers-content">
           <p className="error-text">{error}</p>
         </div>
       ) : (
-        <LocationsTable 
-          locations={locations}
+        <DriversTable 
+          drivers={drivers}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
       )}
 
-      <AddLocationModal 
+      <AddDriverModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
@@ -129,5 +130,4 @@ const Locations = () => {
   );
 };
 
-export default Locations;
-
+export default Drivers;

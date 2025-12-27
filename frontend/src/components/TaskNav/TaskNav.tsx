@@ -3,9 +3,13 @@ import "./TaskNav.css";
 import WorkerUser from '../WorkerUser/WorkerUser';
 import StatCard from '../StatCard/StatCard';
 import StopCard from '../StopCard/StopCard';
-import { Menu, CheckCircle, Clock, Settings, ChevronRight } from 'lucide-react';
+import { Menu, CheckCircle, Clock, Settings, ChevronRight, LogOut } from 'lucide-react';
 
 const TaskNav = () => {
+  const handleLogout = () => {
+    document.cookie = "driver_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.reload();
+  };
   const stops = [
     {
       number: 1,
@@ -73,6 +77,11 @@ const TaskNav = () => {
         <Settings size={24} />
         <span>Route Settings</span>
         <ChevronRight size={20} />
+      </button>
+      
+      <button className='settings-btn' onClick={handleLogout} style={{ marginTop: '8px', backgroundColor: '#dc2626' }}>
+        <LogOut size={24} />
+        <span>Logout</span>
       </button>
     </div>
   )

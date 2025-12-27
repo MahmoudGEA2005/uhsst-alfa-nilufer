@@ -11,7 +11,7 @@ import MainComponent from "./pages/MainComponent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
-import DBDTruckDrivers from "./pages/DBDTruckDrivers";
+import Drivers from "./pages/Drivers";
 import Overview from "./pages/Overview";
 import RoutesPage from "./pages/Routes";
 import Locations from "./pages/Locations";
@@ -28,7 +28,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/main" element={
-          <ProtectedRoute>
+          <ProtectedRoute>  
             <MainComponent />
           </ProtectedRoute>
         } />
@@ -39,7 +39,7 @@ const App = () => {
         }>
           <Route index element={<Navigate to="drivers" replace />} />
           <Route path="overview" element={<Overview />} />
-          <Route path="drivers" element={<DBDTruckDrivers />} />
+          <Route path="drivers" element={<Drivers />} />
           <Route path="routes" element={<RoutesPage />} />
           <Route path="locations" element={<Locations />} />
           <Route path="schedule" element={<Schedule />} />

@@ -15,6 +15,59 @@ class DriverController extends Controller
         return Response::json(['message' => 'DriverController is working!']);
     }
 
+    public function indexAll()
+    {
+        $drivers = Driver::all();
+        
+        return response()->json([
+            'message' => 'Drivers retrieved successfully',
+            'data' => $drivers,
+            'count' => $drivers->count()
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:drivers,email',
+            'phone_number' => 'required|string|unique:drivers,phone_number',
+            'id_number' => 'required|string|unique:drivers,id_number',
+            'license_number' => 'required|string|unique:drivers,license_number',
+            'vehicle_number' => 'required|string|unique:drivers,vehicle_number',
+            'password' => 'required|string|min:6',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        ]);
+
+        // Hash the password
+        $validatedData['password'] = Hash::make($validatedData['password']);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $imagePath = $image->storeAs('drivers', $imageName, 'public');
+            $validatedData['image'] = $imagePath;
+        }
+
+        // Create the driver
+        $driver = Driver::create($validatedData);
+
+        return response()->json([
+            'message' => 'Driver created successfully',
+            'data' => $driver
+        ], 201);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating driver',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function login(Request $request)
     {
         $validatedData = $request->validate([

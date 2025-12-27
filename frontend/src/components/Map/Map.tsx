@@ -151,7 +151,7 @@ const Map = () => {
         >
             {/* 3. CHANGED: Use the 'dark_all' URL instead of 'light_all' */}
             <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                 attribution='&copy; OpenStreetMap &copy; CARTO'
                 // Optional: This filter adds a slight blue/teal tint to match your #001220 preference
                 // If you want pure black/grey, remove the className or the style.
