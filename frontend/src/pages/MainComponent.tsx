@@ -1,7 +1,5 @@
 import axios from 'axios';
 import { useEffect } from 'react';
-import MapComponent from '../MapComponent/MapComponent';
-
 const MainComponent = () => {
 
     const fetchData = async () => {
@@ -17,20 +15,17 @@ const MainComponent = () => {
     };
 
   return (
-    // <div style={{
-    //   display: 'flex',
-    //   alignItems: 'center',
-    //   justifyContent: 'center',
-    //   height: '100vh',
-    //   fontSize: '2rem',
-    //   color: 'var(--solid-color)',
-    //   background: 'var(--netural-color)'
-    // }}>
-    //     Testing COntext
-    //   <button onClick={fetchData}>FETCH</button>
-    // </div>
-    <div>
-        <MapComponent />
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      fontSize: '2rem',
+      color: 'var(--solid-color)',
+      background: 'var(--netural-color)'
+    }}>
+        Testing COntext
+      <button onClick={fetchData}>FETCH</button>
     </div>
   );
 };

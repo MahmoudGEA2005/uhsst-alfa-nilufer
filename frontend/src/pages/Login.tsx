@@ -4,6 +4,9 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import logo from '../assets/main_assets/logo.jpg';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import './Login.css';
 
 interface LoginFormData {
@@ -13,8 +16,11 @@ interface LoginFormData {
 
 const Login = () => {
   const { register, handleSubmit } = useForm<LoginFormData>();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const onLogin = async (data: LoginFormData) => {
+    setErrorMessage('');
     try {
       const endpoint = `${import.meta.env.VITE_BACKEND_URL}/drivers/login`;
       console.log("Sending login request to:", endpoint);
@@ -29,17 +35,19 @@ const Login = () => {
         console.log("Driver data:", response.data.driver);
         console.log("Token expires at:", response.data.token_expires_at);
         
-        // Store token in localStorage
-        localStorage.setItem('driver_token', response.data.token);
-        localStorage.setItem('driver_data', JSON.stringify(response.data.driver));
+        // Store token in cookie (expires in 7 days)
+        Cookies.set('driver_token', response.data.token, { expires: 7 });
+        Cookies.set('driver_data', JSON.stringify(response.data.driver), { expires: 7 });
         
-        // You can redirect to main page here
-        // window.location.href = '/main';
+        // Navigate to main page
+        navigate('/main');
       }
     } catch (error: any) {
       console.error("Login error:", error);
-      if (error.response) {
-        console.error("Error message:", error.response.data.message);
+      if (error.response && error.response.status === 401) {
+        setErrorMessage('E-posta veya şifre hatalı. Lütfen tekrar deneyin.');
+      } else {
+        setErrorMessage('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
       }
     }
   };
@@ -56,6 +64,12 @@ const Login = () => {
         </div>
 
         <form className="login-form" onSubmit={handleSubmit(onLogin)}>
+          {errorMessage && (
+            <div className="error-message">
+              {errorMessage}
+            </div>
+          )}
+          
           <Input
             label="E-posta Adresi"
             icon={Mail}
