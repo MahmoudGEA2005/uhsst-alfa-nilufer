@@ -37,7 +37,6 @@ const Login = () => {
         
         // Store token in cookie (expires in 7 days)
         Cookies.set('driver_token', response.data.token, { expires: 7 });
-        Cookies.set('driver_data', JSON.stringify(response.data.driver), { expires: 7 });
         
         // Navigate to main page
         navigate('/main');

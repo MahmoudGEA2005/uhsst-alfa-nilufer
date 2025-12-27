@@ -1,0 +1,6 @@
+.menu-btn {
+    position: fixed;
+    top: var(--main-padding);
+    right: var(--main-padding);
+    z-index: 99999;
+}

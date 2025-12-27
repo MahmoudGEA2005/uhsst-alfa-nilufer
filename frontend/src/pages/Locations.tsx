@@ -1,0 +1,12 @@
+const Locations = () => {
+  return (
+    <div className="coming-soon-container">
+      <div className="coming-soon">
+        <h1>Yakında Gelecek</h1>
+        <p>Konumlar sayfası hazırlanıyor...</p>
+      </div>
+    </div>
+  );
+};
+
+export default Locations;

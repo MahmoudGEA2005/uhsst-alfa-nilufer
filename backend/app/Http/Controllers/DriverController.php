@@ -41,4 +41,22 @@ class DriverController extends Controller
             "token_expires_at" => Carbon::now()->addDays(7)->toDateTimeString()
         ]);
     }
+
+    public function check(Request $request)
+    {
+        $driver = $request->user('sanctum-driver');
+        
+        if (!$driver) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+                'authenticated' => false
+            ], 401);
+        }
+
+        return response()->json([
+            'message' => 'Driver is authenticated',
+            'driver' => $driver,
+            'authenticated' => true
+        ]);
+    }
 }

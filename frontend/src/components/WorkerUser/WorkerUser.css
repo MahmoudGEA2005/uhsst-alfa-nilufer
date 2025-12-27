@@ -1,0 +1,27 @@
+.w-user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.w-user > img {
+    width: 64px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #22c55e;
+}
+
+.w-user-info h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.w-user-info div {
+    font-size: 13px;
+    font-weight: 600;
+    color: #22c55e;
+    letter-spacing: 0.5px;
+}

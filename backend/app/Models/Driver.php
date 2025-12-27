@@ -19,6 +19,7 @@ class Driver extends Authenticatable
         'password',
         'id_number',
         'vehicle_number',
+        'image',
     ];
 
     protected $hidden = [

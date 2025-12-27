@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string("password");
             $table->string("id_number")->unique();
             $table->string("vehicle_number")->unique();
+            $table->string("image")->nullable();
             $table->timestamps();
         });
     }
