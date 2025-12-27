@@ -1,0 +1,37 @@
+.btn {
+  width: 100%;
+  padding: 18px 24px;
+  border-radius: 16px;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--main-duration);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: var(--main-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-primary:active {
+  opacity: 1;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--solid-color);
+  border: 1px solid var(--solid-light-color);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
