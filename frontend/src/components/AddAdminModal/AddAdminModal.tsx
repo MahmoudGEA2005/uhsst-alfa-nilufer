@@ -64,7 +64,16 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ isOpen, onClose }) => {
       }
     } catch (error: any) {
       if (error.response) {
-        setSubmitError(error.response.data.message || 'Admin eklenirken bir hata oluştu');
+        // Log the full error details
+        console.error('Validation errors:', error.response.data);
+        
+        // Show specific validation errors if available
+        if (error.response.data.errors) {
+          const errorMessages = Object.values(error.response.data.errors).flat().join(', ');
+          setSubmitError(errorMessages);
+        } else {
+          setSubmitError(error.response.data.message || 'Admin eklenirken bir hata oluştu');
+        }
       } else {
         setSubmitError('Sunucuya bağlanırken bir hata oluştu');
       }

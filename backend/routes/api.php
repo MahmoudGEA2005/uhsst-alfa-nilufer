@@ -15,6 +15,8 @@ Route::post("/drivers/add", [App\Http\Controllers\DriverController::class, 'stor
 Route::post("/drivers/login", [App\Http\Controllers\DriverController::class, 'login']);
 
 Route::get("/admins", [App\Http\Controllers\AdminController::class, 'index']);
+Route::get("/admins/all", [App\Http\Controllers\AdminController::class, 'all']);
+Route::post("/admins/add", [App\Http\Controllers\AdminController::class, 'store']);
 Route::post("/admins/login", [App\Http\Controllers\AdminController::class, 'login']);
 
 Route::get("/locations", [App\Http\Controllers\LocationController::class, 'index']);

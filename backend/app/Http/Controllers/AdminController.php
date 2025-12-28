@@ -59,4 +59,65 @@ class AdminController extends Controller
             'authenticated' => true
         ]);
     }
+
+    public function all(Request $request)
+    {
+        try {
+            $admins = Admin::orderBy('created_at', 'desc')->get();
+            
+            return response()->json([
+                'message' => 'Admins fetched successfully',
+                'data' => $admins
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error fetching admins',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:admins',
+                'password' => 'required|string|min:6',
+                'phone_number' => 'required|string|max:20',
+                'admin_id_number' => 'required|string|max:50|unique:admins',
+                'image' => 'nullable|file|image',
+            ]);
+
+            // Handle image upload if present
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('admins', 'public');
+            }
+
+            $admin = Admin::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => Hash::make($validatedData['password']),
+                'phone_number' => $validatedData['phone_number'],
+                'admin_id_number' => $validatedData['admin_id_number'],
+                'image' => $imagePath,
+            ]);
+
+            return response()->json([
+                'message' => 'Admin created successfully',
+                'data' => $admin
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating admin',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
