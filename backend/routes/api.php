@@ -6,6 +6,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\RouteController;
+use App\Http\Controllers\RouteGenerationLogController;
 
 
 Route::get("/drivers", [App\Http\Controllers\DriverController::class, 'index']);
@@ -23,7 +24,8 @@ Route::get("/locations/{id}", [App\Http\Controllers\LocationController::class, '
 Route::put("/locations/{id}", [App\Http\Controllers\LocationController::class, 'update']);
 Route::delete("/locations/{id}", [App\Http\Controllers\LocationController::class, 'destroy']);
 
-Route::post("/routes/generate", [App\Http\Controllers\RouteController::class, 'sendToApi']);
+Route::get("/routes/generate", [App\Http\Controllers\RouteController::class, 'sendToApi']);
+Route::get("/routes/logs", [App\Http\Controllers\RouteGenerationLogController::class, 'index']);
 
 // Protected routes
 Route::middleware(['auth:sanctum'])->group(function () {

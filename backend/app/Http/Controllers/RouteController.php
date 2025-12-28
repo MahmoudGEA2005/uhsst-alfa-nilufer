@@ -7,12 +7,26 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Http;
 use App\Models\Driver;
 use App\Models\Location;
+use App\Models\RouteGenerationLog;
+use Carbon\Carbon;
 
 class RouteController extends Controller
 {
     public function sendToApi(Request $request)
     {
         try {
+            $today = Carbon::today()->toDateString();
+            
+            // Check if already generated today
+            $existingLog = RouteGenerationLog::where('generation_date', $today)->first();
+            if ($existingLog) {
+                return response()->json([
+                    'message' => 'Routes already generated today',
+                    'error' => 'You can only generate routes once per day',
+                    'existing_log' => $existingLog
+                ], 409);
+            }
+
             // Fetch all drivers with their data
             $drivers = Driver::all();
             
@@ -26,30 +40,54 @@ class RouteController extends Controller
                 'timestamp' => now()->toDateTimeString(),
             ];
 
+            $status = 'success';
+            $generatedAt = now();
+
             // TODO: Uncomment this when ready to send to actual API
-            // $response = Http::post('https://your-api-endpoint.com/generate-routes', $dataToSend);
-            // 
-            // if ($response->successful()) {
-            //     return response()->json([
-            //         'message' => 'Data sent successfully to API',
-            //         'api_response' => $response->json()
-            //     ]);
-            // } else {
-            //     return response()->json([
-            //         'message' => 'Error sending data to API',
-            //         'error' => $response->body()
-            //     ], $response->status());
+            // try {
+            //     $response = Http::post('https://your-api-endpoint.com/generate-routes', $dataToSend);
+            //     
+            //     if (!$response->successful()) {
+            //         $status = 'failed';
+            //     }
+            // } catch (\Exception $apiError) {
+            //     $status = 'failed';
             // }
+
+            // Save log
+            $log = RouteGenerationLog::create([
+                'generation_date' => $today,
+                'generated_at' => $generatedAt,
+                'admin_id' => null, // TODO: Get from authenticated user
+                'drivers_count' => $drivers->count(),
+                'locations_count' => $locations->count(),
+                'status' => $status,
+            ]);
 
             // For now, return the data to frontend for testing
             return response()->json([
                 'message' => 'Data prepared successfully',
                 'data' => $dataToSend,
                 'drivers_count' => $drivers->count(),
-                'locations_count' => $locations->count()
+                'locations_count' => $locations->count(),
+                'log' => $log
             ]);
         }
         catch (\Exception $e) {
+            // Log failed attempt
+            try {
+                RouteGenerationLog::create([
+                    'generation_date' => Carbon::today()->toDateString(),
+                    'generated_at' => now(),
+                    'admin_id' => null,
+                    'drivers_count' => 0,
+                    'locations_count' => 0,
+                    'status' => 'failed',
+                ]);
+            } catch (\Exception $logError) {
+                // Ignore if already exists
+            }
+
             return response()->json([
                 'message' => 'Error preparing data',
                 'error' => $e->getMessage()
