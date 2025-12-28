@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Driver;
+use App\Models\Location;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -47,6 +48,9 @@ class DatabaseSeeder extends Seeder
             'vehicle_number' => '34ABC123',
             'image' => 'user.jpg',
         ]);
+
+        // Seed Locations
+        $this->call(LocationSeeder::class);
     }
 }
 
