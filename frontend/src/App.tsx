@@ -15,9 +15,7 @@ import Drivers from "./pages/Drivers";
 import Admins from "./pages/Admins";
 import Overview from "./pages/Overview";
 import RoutesPage from "./pages/Routes";
-import Locations from "./pages/Locations";
 import Schedule from "./pages/Schedule";
-import Reports from "./pages/Reports";
 import 'leaflet/dist/leaflet.css';
 
 
@@ -43,9 +41,7 @@ const App = () => {
           <Route path="drivers" element={<Drivers />} />
           <Route path="admins" element={<Admins />} />
           <Route path="routes" element={<RoutesPage />} />
-          <Route path="locations" element={<Locations />} />
           <Route path="schedule" element={<Schedule />} />
-          <Route path="reports" element={<Reports />} />
         </Route>
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>

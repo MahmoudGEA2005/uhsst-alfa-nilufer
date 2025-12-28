@@ -1,7 +1,7 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import AdminUser from '../AdminUser';
 import './AdminLayout.css';
-import { LayoutDashboard, Users, UserCog, Route, MapPin, Calendar, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, UserCog, Route, Calendar, FileText, Settings } from 'lucide-react';
 import logo from '../../assets/main_assets/logo.jpg';
 
 const AdminLayout = () => {
@@ -37,17 +37,9 @@ const AdminLayout = () => {
             <Route size={20} />
             <span>Rotalar</span>
           </NavLink>
-          <NavLink to="/dashboard/locations" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-            <MapPin size={20} />
-            <span>Konumlar</span>
-          </NavLink>
           <NavLink to="/dashboard/schedule" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
             <Calendar size={20} />
-            <span>Programa</span>
-          </NavLink>
-          <NavLink to="/dashboard/reports" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-            <FileText size={20} />
-            <span>Raporlar</span>
+            <span>Programlama</span>
           </NavLink>
         </nav>
 

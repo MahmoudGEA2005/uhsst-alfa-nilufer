@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./WorkerUser.css";
 import user from "../../assets/patterens/user.jpg";
 
 interface Driver {
   id: number;
-  name: string;
-  photo: string | null;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number?: string;
+  photo?: string | null;
+  image?: string;
   shift_number?: string;
 }
 
@@ -50,9 +54,9 @@ const WorkerUser = () => {
     fetchDriverData();
   }, []);
 
-  const driverPhoto = driver?.photo 
+  const driverPhoto = driver?.image 
     ? `${import.meta.env.VITE_STORAGE_URL}/${driver.image}` 
-    : user;
+    : (driver?.photo ? `${import.meta.env.VITE_STORAGE_URL}/${driver.photo}` : user);
 
   const driverName = `${driver?.first_name} ${driver?.last_name}` || 'M. Yılmaz';
   const shiftInfo = driver?.shift_number 
@@ -62,7 +66,7 @@ const WorkerUser = () => {
   if (loading) {
     return (
       <div className="w-user">
-        <div>Loading...</div>
+        <div>Yükleniyor...</div>
       </div>
     );
   }

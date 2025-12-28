@@ -51,12 +51,12 @@ const Routes = () => {
       );
 
       console.log('Response from API:', response.data);
-      console.log('Drivers:', response.data.data.drivers);
-      console.log('Locations:', response.data.data.locations);
-      console.log('Drivers Count:', response.data.drivers_count);
-      console.log('Locations Count:', response.data.locations_count);
-
-      alert(`Data prepared successfully!\nDrivers: ${response.data.drivers_count}\nLocations: ${response.data.locations_count}\nCheck console for details.`);
+      
+      const message = response.data.message || 'Rotalar başarıyla oluşturuldu';
+      const totalRoutes = response.data.data?.total_routes || 0;
+      const totalWaste = response.data.data?.total_waste_kg || 0;
+      
+      alert(`${message}\n\nOluşturulan Rota: ${totalRoutes}\nToplam Atık: ${totalWaste.toLocaleString('tr-TR')} kg\nSürücü: ${response.data.data?.drivers_count || 0}\nKonum: ${response.data.data?.locations_count || 0}`);
       
       // Refresh logs after successful generation
       fetchLogs();

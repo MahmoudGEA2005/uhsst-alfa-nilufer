@@ -49,18 +49,18 @@ const AdminLogin = () => {
                 <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
               </svg>
             </div>
-            <h1>EcoTrack Admin</h1>
-            <p>Streamlining waste management for a cleaner, sustainable future.</p>
+            <h1>Nilüfer Akıllı Atık Yönetimi</h1>
+            <p>Yıllık 3,522 ton CO₂ tasarrufu ile daha temiz ve sürdürülebilir bir gelecek için akıllı atık yönetimi.</p>
           </div>
 
           <div className="admin-stats">
             <div className="stat-card">
-              <h2>98%</h2>
-              <p>EFFICIENCY</p>
+              <h2>160K+</h2>
+              <p>AĞAÇ KURTARILDI</p>
             </div>
             <div className="stat-card">
-              <h2>24/7</h2>
-              <p>MONITORING</p>
+              <h2>3,523</h2>
+              <p>TON CO₂ TASARRUF/YIL</p>
             </div>
           </div>
         </div>
@@ -69,8 +69,8 @@ const AdminLogin = () => {
       <div className="admin-login-right">
         <div className="admin-login-form-container">
           <div className="admin-login-header">
-            <h2>Kontrol panelinize giriş yapın</h2>
-            <p>Toplama programlarını ve filo operasyonlarını yönetin.</p>
+            <h2>Yönetim Paneline Giriş Yapın</h2>
+            <p>Toplama rotalarını ve filo operasyonlarını yönetin.</p>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -94,7 +94,7 @@ const AdminLogin = () => {
                 <Mail size={20} className="input-icon" />
                 <input
                   type="email"
-                  placeholder="admin@ecotrack.com"
+                  placeholder="admin@nilufer.bel.tr"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -135,13 +135,13 @@ const AdminLogin = () => {
             </button>
 
             <p className="contact-admin">
-              Hesabınız yok mu? <a href="#">Süper Yönetici ile İletişime Geçin</a>
+              Hesabınız yok mu? <a href="#">Sistem Yöneticisi ile İletişime Geçin</a>
             </p>
           </form>
         </div>
 
         <footer className="admin-login-footer">
-          © 2024 EcoTrack Systems. Tüm hakları saklıdır.
+          © 2024 Nilüfer Belediyesi. Tüm hakları saklıdır.
         </footer>
       </div>
     </div>

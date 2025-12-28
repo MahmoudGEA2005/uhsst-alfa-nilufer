@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StatsController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LocationController;
@@ -30,6 +31,8 @@ Route::get("/routes/generate", [App\Http\Controllers\RouteController::class, 'se
 Route::get("/routes/logs", [App\Http\Controllers\RouteGenerationLogController::class, 'index']);
 Route::get("/routes/all", [App\Http\Controllers\RouteController::class, 'getAllDriverRoutes']);
 Route::get("/routes/driver/{driverId}", [App\Http\Controllers\RouteController::class, 'getDriverRoutes']);
+
+Route::get("/stats", [App\Http\Controllers\StatsController::class, 'getStats']);
 
 // Protected routes
 Route::middleware(['auth:sanctum'])->group(function () {

@@ -44,9 +44,9 @@ const Login = () => {
     } catch (error: any) {
       console.error("Login error:", error);
       if (error.response && error.response.status === 401) {
-        setErrorMessage('E-posta veya şifre hatalı. Lütfen tekrar deneyin.');
+        setErrorMessage('E-posta adresi veya şifre hatalı. Lütfen kontrol edip tekrar deneyin.');
       } else {
-        setErrorMessage('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+        setErrorMessage('Giriş yapılırken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
       }
     }
   };
@@ -58,8 +58,8 @@ const Login = () => {
           <div className="login-icon">
             <img src={logo} alt="Logo" className="logo-image" />
           </div>
-          <h1 className="login-title">isim sonra</h1>
-          <p className="login-subtitle">Rotanıza başlamak için giriş yapın</p>
+          <h1 className="login-title">Sürücü Paneli</h1>
+          <p className="login-subtitle">Görevlerinize başlamak için giriş yapın</p>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit(onLogin)}>
@@ -98,7 +98,7 @@ const Login = () => {
           <p>
             Hesabınızla ilgili yardıma mı ihtiyacınız var?{' '}
             <a href="#" className="contact-link">
-              Merkez ile İletişim
+              Yardım Merkezi ile İletişime Geçin
             </a>
           </p>
         </div>
