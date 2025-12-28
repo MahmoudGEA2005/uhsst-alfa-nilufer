@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, useEffect } from "react";
-import { GoogleMap, Marker, DirectionsRenderer, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
 
 // Libraries array (must be constant to avoid reload warnings)
 const libraries: ("places")[] = ["places"];
@@ -18,16 +18,16 @@ const center = {
 
 // Waypoints for the route
 const waypoints = [
-  { lat: 40.1950, lng: 29.0600, address: "Başlangıç Noktası" }, // Ulu Cami
-  { lat: 40.2005, lng: 29.0650, address: "Ara Durak" }, // Atatürk Cd.
-  { lat: 40.2058, lng: 29.0705, address: "Ara Durak" }, // Heykel
-  { lat: 40.2102, lng: 29.0750, address: "Başaran, 1. Güneşli Sk. No:35, 16240 Osmangazi/Bursa, Türkiye" }, // Setbaşı
+  { lat: 40.1950, lng: 29.0600 }, // Ulu Cami
+  { lat: 40.2005, lng: 29.0650 }, // Atatürk Cd.
+  { lat: 40.2058, lng: 29.0705 }, // Heykel
+  { lat: 40.2102, lng: 29.0750 }, // Setbaşı
 ];
 
 const Map = () => {
   const [directionsResponse, setDirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [selectedMarker, setSelectedMarker] = useState<{ lat: number; lng: number; address: string } | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
 
   // Load Google Maps API
@@ -37,41 +37,106 @@ const Map = () => {
     libraries: libraries,
   });
 
-  // Get user's current location
+  // Helper function to process location
+  const processLocation = useCallback((position: GeolocationPosition) => {
+    const locationData = {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      accuracy: position.coords.accuracy,
+      altitude: position.coords.altitude,
+      altitudeAccuracy: position.coords.altitudeAccuracy,
+      heading: position.coords.heading,
+      speed: position.coords.speed,
+      timestamp: position.timestamp,
+    };
+
+    const location = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+
+    console.log("📍 Konum Verileri:", {
+      Koordinatlar: {
+        Enlem: `${locationData.latitude}°`,
+        Boylam: `${locationData.longitude}°`,
+      },
+      Doğruluk: `${locationData.accuracy ? locationData.accuracy.toFixed(2) : 'N/A'} metre`,
+      Yükseklik: locationData.altitude ? `${locationData.altitude.toFixed(2)} metre` : 'N/A',
+      Yön: locationData.heading ? `${locationData.heading.toFixed(2)}°` : 'N/A',
+      Hız: locationData.speed ? `${(locationData.speed * 3.6).toFixed(2)} km/saat` : 'N/A',
+      Zaman: new Date(locationData.timestamp).toLocaleString('tr-TR'),
+      Ham_Veri: locationData,
+    });
+
+    setCurrentLocation(location);
+    setLocationError(null);
+
+    if (mapRef.current) {
+      mapRef.current.setCenter(location);
+      mapRef.current.setZoom(15);
+    }
+  }, []);
+
+  // Get user's current location with better error handling
+  const getLocation = useCallback(() => {
+    if (!isLoaded || !("geolocation" in navigator)) {
+      setLocationError("Tarayıcınız konum servisini desteklemiyor.");
+      return;
+    }
+
+    // First try: getCurrentPosition with cached location (fastest)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log("✅ Konum başarıyla alındı");
+        processLocation(position);
+      },
+      () => {
+        // Second try: getCurrentPosition with relaxed options and longer timeout
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log("✅ Konum (relaxed options) ile alındı");
+            processLocation(position);
+          },
+          (error) => {
+            let errorMessage = "";
+            if (error.code === 1) {
+              errorMessage = "Konum izni reddedildi. Lütfen tarayıcı ayarlarından konum izni verin ve sayfayı yenileyin.";
+            } else if (error.code === 2) {
+              errorMessage = "Konum bilgisi alınamadı. GPS'inizin açık olduğundan ve internete bağlı olduğunuzdan emin olun.";
+            } else if (error.code === 3) {
+              errorMessage = "Konum isteği zaman aşımına uğradı. Konum servisiniz kapalı olabilir veya GPS sinyali zayıf olabilir.";
+            } else {
+              errorMessage = "Konum alınırken bir hata oluştu.";
+            }
+            
+            console.error("❌ Geolocation Hatası:", {
+              Kod: error.code,
+              Mesaj: error.message,
+              Açıklama: errorMessage
+            });
+            
+            setLocationError(errorMessage);
+            setCurrentLocation(null);
+          },
+          {
+            enableHighAccuracy: false, // Lower accuracy = faster
+            timeout: 30000, // 30 seconds
+            maximumAge: 600000, // Accept cached location up to 10 minutes
+          }
+        );
+      },
+      {
+        enableHighAccuracy: false, // Start with lower accuracy for speed
+        timeout: 15000, // 15 seconds
+        maximumAge: 600000, // Accept cached location up to 10 minutes (10 * 60 * 1000)
+      }
+    );
+  }, [isLoaded, processLocation]);
+
   useEffect(() => {
     if (!isLoaded) return;
-
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          console.log("Konum alındı:", location);
-          setCurrentLocation(location);
-
-          // Center map on user's location
-          if (mapRef.current) {
-            mapRef.current.setCenter(location);
-            mapRef.current.setZoom(15);
-          }
-        },
-        (error) => {
-          console.warn("Geolocation hatası:", error.message);
-          // Kullanıcıya izin vermedi veya konum alınamadı
-          // Default center kullanılacak
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0, // Her zaman fresh location
-        }
-      );
-    } else {
-      console.warn("Geolocation API desteklenmiyor");
-    }
-  }, [isLoaded]);
+    getLocation();
+  }, [isLoaded, getLocation]);
 
   // Calculate route when map is loaded
   useEffect(() => {
@@ -81,10 +146,10 @@ const Map = () => {
     
     directionsService.route(
       {
-        origin: { lat: waypoints[0].lat, lng: waypoints[0].lng },
-        destination: { lat: waypoints[waypoints.length - 1].lat, lng: waypoints[waypoints.length - 1].lng },
+        origin: waypoints[0],
+        destination: waypoints[waypoints.length - 1],
         waypoints: waypoints.slice(1, -1).map((point) => ({
-          location: { lat: point.lat, lng: point.lng },
+          location: point,
           stopover: true,
         })),
         travelMode: google.maps.TravelMode.DRIVING,
@@ -131,42 +196,76 @@ const Map = () => {
   }
 
   return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={currentLocation || center}
-      zoom={currentLocation ? 15 : 13}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
-      options={{
-        disableDefaultUI: false,
-        zoomControl: true,
-        streetViewControl: false,
-        mapTypeControl: false,
-        fullscreenControl: true,
-      }}
-    >
+    <>
+      {/* Location Error Message */}
+      {locationError && (
+        <div style={{
+          position: "absolute",
+          top: "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          backgroundColor: "#ef4444",
+          color: "white",
+          padding: "12px 24px",
+          borderRadius: "8px",
+          zIndex: 10001,
+          fontSize: "14px",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
+          maxWidth: "90%",
+          textAlign: "center",
+        }}>
+          <div style={{ marginBottom: "8px" }}>⚠️ {locationError}</div>
+          <button
+            onClick={() => {
+              setLocationError(null);
+              getLocation();
+            }}
+            style={{
+              backgroundColor: "white",
+              color: "#ef4444",
+              border: "none",
+              padding: "6px 16px",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "13px",
+              fontWeight: "bold",
+              marginTop: "8px",
+            }}
+          >
+            Tekrar Dene
+          </button>
+        </div>
+      )}
+      
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={currentLocation || center}
+        zoom={currentLocation ? 15 : 13}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+        options={{
+          disableDefaultUI: false,
+          zoomControl: true,
+          streetViewControl: false,
+          mapTypeControl: false,
+          fullscreenControl: true,
+        }}
+      >
       {/* User's Current Location Marker */}
       {currentLocation && (
         <Marker
           position={currentLocation}
           icon={{
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 12,
+            scale: 10,
             fillColor: "#3b82f6",
             fillOpacity: 1,
             strokeColor: "#ffffff",
-            strokeWeight: 4,
-            anchor: new google.maps.Point(0, 0),
-            labelOrigin: new google.maps.Point(0, -40),
-          }}
-          label={{
-            text: "📍 Konumunuz",
-            color: "#ffffff",
-            fontSize: "14px",
-            fontWeight: "bold",
+            strokeWeight: 3,
           }}
           animation={google.maps.Animation.DROP}
-          zIndex={1000}
+          zIndex={10000}
+          title="📍 Konumunuz"
         />
       )}
       {/* Route */}
@@ -179,15 +278,19 @@ const Map = () => {
               strokeWeight: 6,
               strokeOpacity: 0.9,
             },
-            suppressMarkers: true,
-            suppressInfoWindows: true,
+            suppressMarkers: false,
+            markerOptions: {
+              icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+              },
+            },
           }}
         />
       )}
 
       {/* Start Marker */}
       <Marker
-        position={{ lat: waypoints[0].lat, lng: waypoints[0].lng }}
+        position={waypoints[0]}
         icon={{
           path: google.maps.SymbolPath.CIRCLE,
           scale: 12,
@@ -196,18 +299,11 @@ const Map = () => {
           strokeColor: "#ffffff",
           strokeWeight: 4,
         }}
-        onClick={() => {
-          setSelectedMarker({
-            lat: waypoints[0].lat,
-            lng: waypoints[0].lng,
-            address: waypoints[0].address
-          });
-        }}
       />
 
       {/* End Marker */}
       <Marker
-        position={{ lat: waypoints[waypoints.length - 1].lat, lng: waypoints[waypoints.length - 1].lng }}
+        position={waypoints[waypoints.length - 1]}
         icon={{
           path: google.maps.SymbolPath.CIRCLE,
           scale: 12,
@@ -216,70 +312,9 @@ const Map = () => {
           strokeColor: "#ffffff",
           strokeWeight: 4,
         }}
-        onClick={() => {
-          setSelectedMarker({
-            lat: waypoints[waypoints.length - 1].lat,
-            lng: waypoints[waypoints.length - 1].lng,
-            address: waypoints[waypoints.length - 1].address
-          });
-        }}
       />
-
-      {/* InfoWindow for selected marker */}
-      {selectedMarker && (
-        <InfoWindow
-          position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
-          onCloseClick={() => setSelectedMarker(null)}
-        >
-          <div style={{
-            padding: "12px",
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-            minWidth: "220px",
-            maxWidth: "280px"
-          }}>
-            {selectedMarker.address.includes("Başaran") ? (
-              <>
-                <div style={{
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  color: "#111827",
-                  marginBottom: "10px",
-                  lineHeight: "1.4"
-                }}>
-                  📍 Başaran
-                </div>
-                <div style={{
-                  fontSize: "14px",
-                  color: "#4b5563",
-                  lineHeight: "1.6"
-                }}>
-                  <div style={{ marginBottom: "4px" }}>
-                    <strong>Adres:</strong>
-                  </div>
-                  <div style={{ marginBottom: "6px", paddingLeft: "8px" }}>
-                    1. Güneşli Sk. No:35
-                  </div>
-                  <div style={{ marginBottom: "4px", paddingLeft: "8px" }}>
-                    16240 Osmangazi/Bursa
-                  </div>
-                  <div style={{ paddingLeft: "8px" }}>
-                    Türkiye
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div style={{
-                fontSize: "15px",
-                fontWeight: "600",
-                color: "#111827"
-              }}>
-                {selectedMarker.address}
-              </div>
-            )}
-          </div>
-        </InfoWindow>
-      )}
-    </GoogleMap>
+      </GoogleMap>
+    </>
   );
 };
 
