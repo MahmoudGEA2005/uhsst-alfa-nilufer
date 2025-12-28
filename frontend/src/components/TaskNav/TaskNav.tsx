@@ -5,7 +5,12 @@ import StatCard from '../StatCard/StatCard';
 import StopCard from '../StopCard/StopCard';
 import { Menu, CheckCircle, Clock, Settings, ChevronRight, LogOut } from 'lucide-react';
 
-const TaskNav = () => {
+interface TaskNavProps {
+  isOpen: boolean;
+  navRef: React.RefObject<HTMLDivElement>;
+}
+
+const TaskNav: React.FC<TaskNavProps> = ({ isOpen, navRef }) => {
   const handleLogout = () => {
     document.cookie = "driver_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     window.location.reload();
@@ -36,7 +41,10 @@ const TaskNav = () => {
   ];
 
   return (
-    <div className='task-nav'>
+    <div 
+      ref={navRef}
+      className={`task-nav ${isOpen ? 'open' : ''}`}
+    >
       
       
       <WorkerUser />

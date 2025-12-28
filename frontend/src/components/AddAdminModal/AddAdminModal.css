@@ -1,0 +1,13 @@
+/* Reuse the same styles as AddDriverModal */
+@import '../AddDriverModal/AddDriverModal.css';
+
+.add-admin-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideIn 0.3s ease-out;
+}

@@ -1,4 +1,4 @@
-.drivers-page {
+.admins-page {
   padding: 2rem;
   background: #f8fafc;
   min-height: 100vh;
@@ -32,7 +32,7 @@
   animation-delay: 0.3s;
 }
 
-.drivers-content {
+.admins-content {
   background: #ffffff;
   border-radius: 12px;
   padding: 2rem;

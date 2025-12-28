@@ -20,8 +20,6 @@ return new class extends Migration
             $table->integer('locations_count');
             $table->string('status')->default('success'); // success / failed
             $table->timestamps();
-
-            $table->unique('generation_date'); // prevent double generation per day
         });
     }
 

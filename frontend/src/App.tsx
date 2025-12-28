@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
 import Drivers from "./pages/Drivers";
+import Admins from "./pages/Admins";
 import Overview from "./pages/Overview";
 import RoutesPage from "./pages/Routes";
 import Locations from "./pages/Locations";
@@ -40,6 +41,7 @@ const App = () => {
           <Route index element={<Navigate to="drivers" replace />} />
           <Route path="overview" element={<Overview />} />
           <Route path="drivers" element={<Drivers />} />
+          <Route path="admins" element={<Admins />} />
           <Route path="routes" element={<RoutesPage />} />
           <Route path="locations" element={<Locations />} />
           <Route path="schedule" element={<Schedule />} />

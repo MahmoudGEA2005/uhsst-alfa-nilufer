@@ -1,7 +1,7 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import AdminUser from '../AdminUser';
 import './AdminLayout.css';
-import { LayoutDashboard, Users, Route, MapPin, Calendar, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, UserCog, Route, MapPin, Calendar, FileText, Settings } from 'lucide-react';
 import logo from '../../assets/main_assets/logo.jpg';
 
 const AdminLayout = () => {
@@ -28,6 +28,10 @@ const AdminLayout = () => {
           <NavLink to="/dashboard/drivers" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
             <Users size={20} />
             <span>Sürücüler</span>
+          </NavLink>
+          <NavLink to="/dashboard/admins" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
+            <UserCog size={20} />
+            <span>Adminler</span>
           </NavLink>
           <NavLink to="/dashboard/routes" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
             <Route size={20} />

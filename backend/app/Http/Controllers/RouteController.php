@@ -16,16 +16,6 @@ class RouteController extends Controller
     {
         try {
             $today = Carbon::today()->toDateString();
-            
-            // Check if already generated today
-            $existingLog = RouteGenerationLog::where('generation_date', $today)->first();
-            if ($existingLog) {
-                return response()->json([
-                    'message' => 'Routes already generated today',
-                    'error' => 'You can only generate routes once per day',
-                    'existing_log' => $existingLog
-                ], 409);
-            }
 
             // Fetch all drivers with their data
             $drivers = Driver::all();
@@ -54,7 +44,7 @@ class RouteController extends Controller
             //     $status = 'failed';
             // }
 
-            // Save log
+            // Save log (allow multiple per day)
             $log = RouteGenerationLog::create([
                 'generation_date' => $today,
                 'generated_at' => $generatedAt,
@@ -70,7 +60,7 @@ class RouteController extends Controller
                 'data' => $dataToSend,
                 'drivers_count' => $drivers->count(),
                 'locations_count' => $locations->count(),
-                'log' => $log
+                // 'log' => $log
             ]);
         }
         catch (\Exception $e) {

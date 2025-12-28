@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 
 interface AdminProtectedRouteProps {
   children: React.ReactNode;
@@ -51,20 +52,7 @@ const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({ children }) =
   }, []);
 
   if (isLoading) {
-    return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        background: '#f7f9fa',
-        color: '#111827',
-        fontSize: '1.25rem',
-        fontWeight: 600,
-      }}>
-        Yükleniyor...
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (isAuthenticated === false) {

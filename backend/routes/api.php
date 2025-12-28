@@ -26,6 +26,8 @@ Route::delete("/locations/{id}", [App\Http\Controllers\LocationController::class
 
 Route::get("/routes/generate", [App\Http\Controllers\RouteController::class, 'sendToApi']);
 Route::get("/routes/logs", [App\Http\Controllers\RouteGenerationLogController::class, 'index']);
+Route::get("/routes/all", [App\Http\Controllers\RouteController::class, 'getAllDriverRoutes']);
+Route::get("/routes/driver/{driverId}", [App\Http\Controllers\RouteController::class, 'getDriverRoutes']);
 
 // Protected routes
 Route::middleware(['auth:sanctum'])->group(function () {

@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from "react";
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
+import { Plus, Minus, Maximize2, Navigation, Layers } from "lucide-react";
 
 // Libraries array (must be constant to avoid reload warnings)
 const libraries: ("places")[] = ["places"];
@@ -173,6 +174,53 @@ const Map = () => {
     mapRef.current = null;
   }, []);
 
+  // Custom map control handlers
+  const handleZoomIn = () => {
+    if (mapRef.current) {
+      const currentZoom = mapRef.current.getZoom();
+      if (currentZoom !== undefined) {
+        mapRef.current.setZoom(currentZoom + 1);
+      }
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (mapRef.current) {
+      const currentZoom = mapRef.current.getZoom();
+      if (currentZoom !== undefined) {
+        mapRef.current.setZoom(currentZoom - 1);
+      }
+    }
+  };
+
+  const handleRecenter = () => {
+    if (mapRef.current && currentLocation) {
+      mapRef.current.setCenter(currentLocation);
+      mapRef.current.setZoom(15);
+    }
+  };
+
+  const handleFullscreen = () => {
+    const mapElement = document.querySelector('[role="region"]') as HTMLElement;
+    if (mapElement) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        mapElement.requestFullscreen();
+      }
+    }
+  };
+
+  const [mapType, setMapType] = useState<'roadmap' | 'satellite'>('roadmap');
+
+  const toggleMapType = () => {
+    const newType = mapType === 'roadmap' ? 'satellite' : 'roadmap';
+    setMapType(newType);
+    if (mapRef.current) {
+      mapRef.current.setMapTypeId(newType);
+    }
+  };
+
   if (!isLoaded) {
     return (
       <div style={{ 
@@ -244,11 +292,12 @@ const Map = () => {
         onLoad={onLoad}
         onUnmount={onUnmount}
         options={{
-          disableDefaultUI: false,
-          zoomControl: true,
+          disableDefaultUI: true, // Disable all default UI controls
+          zoomControl: false,
           streetViewControl: false,
           mapTypeControl: false,
-          fullscreenControl: true,
+          fullscreenControl: false,
+          gestureHandling: "greedy",
         }}
       >
       {/* User's Current Location Marker */}
@@ -314,6 +363,169 @@ const Map = () => {
         }}
       />
       </GoogleMap>
+
+      {/* Custom Map Controls */}
+      <div style={{
+        position: "absolute",
+        top: "20px",
+        right: "20px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        zIndex: 10000,
+      }}>
+        {/* Zoom In */}
+        <button
+          onClick={handleZoomIn}
+          style={{
+            background: "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRadius: "12px",
+            width: "48px",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#ffffff",
+            cursor: "pointer",
+            transition: "all 0.3s",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #22503d 0%, #122621 100%)";
+            e.currentTarget.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+          title="Zoom In"
+        >
+          <Plus size={24} />
+        </button>
+
+        {/* Zoom Out */}
+        <button
+          onClick={handleZoomOut}
+          style={{
+            background: "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRadius: "12px",
+            width: "48px",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#ffffff",
+            cursor: "pointer",
+            transition: "all 0.3s",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #22503d 0%, #122621 100%)";
+            e.currentTarget.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+          title="Zoom Out"
+        >
+          <Minus size={24} />
+        </button>
+
+        {/* Recenter to Current Location */}
+        {currentLocation && (
+          <button
+            onClick={handleRecenter}
+            style={{
+              background: "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              borderRadius: "12px",
+              width: "48px",
+              height: "48px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#ffffff",
+              cursor: "pointer",
+              transition: "all 0.3s",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "linear-gradient(180deg, #22503d 0%, #122621 100%)";
+              e.currentTarget.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)";
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+            title="Recenter to My Location"
+          >
+            <Navigation size={24} />
+          </button>
+        )}
+
+        {/* Map Type Toggle */}
+        <button
+          onClick={toggleMapType}
+          style={{
+            background: "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRadius: "12px",
+            width: "48px",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#ffffff",
+            cursor: "pointer",
+            transition: "all 0.3s",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #22503d 0%, #122621 100%)";
+            e.currentTarget.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+          title={`Switch to ${mapType === 'roadmap' ? 'Satellite' : 'Map'} View`}
+        >
+          <Layers size={24} />
+        </button>
+
+        {/* Fullscreen Toggle */}
+        <button
+          onClick={handleFullscreen}
+          style={{
+            background: "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRadius: "12px",
+            width: "48px",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#ffffff",
+            cursor: "pointer",
+            transition: "all 0.3s",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #22503d 0%, #122621 100%)";
+            e.currentTarget.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "linear-gradient(180deg, #1a3d2e 0%, #0d1f19 100%)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+          title="Toggle Fullscreen"
+        >
+          <Maximize2 size={24} />
+        </button>
+      </div>
     </>
   );
 };

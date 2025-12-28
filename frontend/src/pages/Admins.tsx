@@ -1,65 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import PageHeader from '../components/PageHeader/PageHeader';
 import SearchFilterBar from '../components/SearchFilterBar/SearchFilterBar';
-import AddDriverModal from '../components/AddDriverModal/AddDriverModal';
-import DriversTable from '../components/DriversTable/DriversTable';
+import AddAdminModal from '../components/AddAdminModal/AddAdminModal';
+import AdminsTable from '../components/AdminsTable/AdminsTable';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
-import './Drivers.css';
+import './Admins.css';
 
-interface Driver {
+interface Admin {
   id: number;
-  first_name: string;
-  last_name: string;
+  name: string;
   email: string;
   phone_number: string;
-  license_number: string;
-  vehicle_number: string;
-  id_number: string;
+  admin_id_number: string;
   image: string | null;
   created_at: string;
 }
 
-const Drivers = () => {
+const Admins = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [admins, setAdmins] = useState<Admin[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDrivers = async () => {
+  const fetchAdmins = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/drivers/all`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admins/all`);
       const data = await response.json();
       
       if (response.ok) {
-        setDrivers(data.data || []);
+        setAdmins(data.data || []);
         setError(null);
       } else {
-        setError('Sürücüler yüklenirken bir hata oluştu');
+        setError('Adminler yüklenirken bir hata oluştu');
       }
     } catch (err) {
       setError('Sunucuya bağlanırken bir hata oluştu');
-      console.error('Error fetching drivers:', err);
+      console.error('Error fetching admins:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDrivers();
+    fetchAdmins();
   }, []);
 
-  const handleAddNewDriver = () => {
+  const handleAddNewAdmin = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (driver: Driver) => {
-    console.log('Düzenle:', driver);
+  const handleEdit = (admin: Admin) => {
+    console.log('Düzenle:', admin);
     // TODO: Open edit modal
   };
 
-  const handleDelete = (driver: Driver) => {
-    console.log('Sil:', driver);
+  const handleDelete = (admin: Admin) => {
+    console.log('Sil:', admin);
     // TODO: Implement delete functionality
   };
 
@@ -78,41 +75,41 @@ const Drivers = () => {
   const filters = [
     {
       label: 'Durum',
-      options: ['Tüm Durumlar', 'Aktif', 'Pasif', 'İzinli']
+      options: ['Tüm Durumlar', 'Aktif', 'Pasif']
     },
     {
-      label: 'Araç Tipi',
-      options: ['Araç Tipi', 'Kamyon', 'Kamyonet', 'Çöp Kamyonu']
+      label: 'Rol',
+      options: ['Tümü', 'Süper Admin', 'Admin', 'Moderatör']
     }
   ];
 
   if (loading) {
     return (
-      <div className="drivers-page">
+      <div className="admins-page">
         <LoadingSpinner inline />
       </div>
     );
   }
 
   return (
-    <div className="drivers-page">
+    <div className="admins-page">
       <div className="slide-in slide-in-stagger-1">
         <PageHeader
-          title="Kamyon Sürücüleri"
-          subtitle="Personeli yönetin ve sürücüleri atık toplama rotalarına atayın."
+          title="Yönetici Kullanıcılar"
+          subtitle="Sistem yöneticilerini yönetin ve yetkileri atayın."
           breadcrumb={[
             { label: 'Ana Sayfa', path: '/' },
-            { label: 'Sürücüler' }
+            { label: 'Adminler' }
           ]}
         />
       </div>
 
       <div className="slide-in slide-in-stagger-2">
         <SearchFilterBar
-          searchPlaceholder="İsim, ID veya ehliyet ile ara..."
+          searchPlaceholder="İsim, ID veya e-posta ile ara..."
           filters={filters}
-          onAddNew={handleAddNewDriver}
-          addButtonText="Yeni Sürücü Ekle"
+          onAddNew={handleAddNewAdmin}
+          addButtonText="Yeni Admin Ekle"
           onDownload={handleDownload}
           onSearch={handleSearch}
           onFilterChange={handleFilterChange}
@@ -120,20 +117,20 @@ const Drivers = () => {
       </div>
 
       {error ? (
-        <div className="drivers-content slide-in slide-in-stagger-3">
+        <div className="admins-content slide-in slide-in-stagger-3">
           <p className="error-text">{error}</p>
         </div>
       ) : (
         <div className="slide-in slide-in-stagger-3">
-          <DriversTable 
-            drivers={drivers}
+          <AdminsTable 
+            admins={admins}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         </div>
       )}
 
-      <AddDriverModal 
+      <AddAdminModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
@@ -141,4 +138,4 @@ const Drivers = () => {
   );
 };
 
-export default Drivers;
+export default Admins;

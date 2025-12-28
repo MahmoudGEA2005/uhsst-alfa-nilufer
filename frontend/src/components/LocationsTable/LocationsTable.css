@@ -2,12 +2,33 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;
   margin-top: 1.5rem;
+}
+
+/* Custom Scrollbar Styling */
+.locations-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.locations-table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.locations-table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.locations-table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
 .locations-table {
   width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
 }
 
