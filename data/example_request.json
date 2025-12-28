@@ -1,0 +1,39 @@
+{
+  "drivers": [
+    {
+      "driverId": 1,
+      "driverName": "Mehmet Yılmaz",
+      "driverUserName": "mehmet.yilmaz"
+    },
+    {
+      "driverId": 2,
+      "driverName": "Ahmet Kaya",
+      "driverUserName": "ahmet.kaya"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": 1,
+      "locationName": "Atatürk Caddesi – Osmangazi Ulu Cami Main Square",
+      "coordinates": [40.1950, 29.0600],
+      "distance": 2.5,
+      "people_count": 5000
+    },
+    {
+      "locationId": 2,
+      "locationName": "Santral Garaj Caddesi – Kent Meydanı AVM West Entrance",
+      "coordinates": [40.1975, 29.0618],
+      "distance": 1.8,
+      "people_count": 8000
+    },
+    {
+      "locationId": 3,
+      "locationName": "Fatih Sultan Mehmet Bulvarı – Residential Block A",
+      "coordinates": [40.2131, 29.0374],
+      "distance": 3.2,
+      "people_count": 6000
+    }
+  ]
+}
+
+
